@@ -1,0 +1,229 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    W&B TRAINING - START HERE                                ║
+║                                                                              ║
+║  Complete setup for rigorous multimodal model training with metrics logging  ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+📥 STEP 1: DOWNLOAD THESE FILES
+══════════════════════════════════════════════════════════════════════════════
+
+From /mnt/user-data/outputs/:
+  ✓ train_wandb.py                    ← Main training script with W&B
+  ✓ model_architecture_large.py       ← Model (already have)
+  ✓ WANDB_QUICKSTART.md               ← 5-minute setup guide
+  ✓ WANDB_GUIDE.md                    ← Detailed reference
+  ✓ WANDB_COMPLETE_GUIDE.md           ← Everything explained
+
+Copy to: ~/Documents/dashverse/
+
+
+🛠️ STEP 2: INSTALL DEPENDENCIES (First Time Only)
+══════════════════════════════════════════════════════════════════════════════
+
+Run in terminal:
+  pip install wandb psutil GPUtil
+
+Verify:
+  python -c "import wandb, psutil, GPUtil; print('✓ Ready')"
+
+
+🌐 STEP 3: CREATE W&B ACCOUNT & LOGIN (First Time Only)
+══════════════════════════════════════════════════════════════════════════════
+
+1. Go to: https://wandb.ai/signup
+2. Create account (free tier is fine)
+3. Verify email
+4. Get API key from: https://wandb.ai/settings/profile
+5. In terminal, run:
+     wandb login
+   Paste API key when prompted
+
+Result: "✓ Successfully authenticated"
+
+
+🚀 STEP 4: CUSTOMIZE CONFIG (Optional)
+══════════════════════════════════════════════════════════════════════════════
+
+Edit ~/Documents/dashverse/train_wandb.py
+
+Find this section:
+  class Config:
+      batch_size = 16              ← Adjust for your GPU
+      num_epochs = 100             ← Or 50 for quick test
+      learning_rate = 1e-3
+
+For H100 80GB: Keep batch_size=16 or increase to 32
+For RTX 3090 24GB: Keep batch_size=8
+
+
+▶️ STEP 5: START TRAINING
+══════════════════════════════════════════════════════════════════════════════
+
+cd ~/Documents/dashverse
+python train_wandb.py
+
+You'll see:
+  ✓ Loading dataset...
+  ✓ Building tokenizer...
+  ✓ Creating data loaders...
+  ✓ Building model...
+  ✓ Setting up W&B...
+  ✓ W&B run initialized: https://wandb.ai/your-username/multimodal-engravings/runs/xxx
+
+
+📊 STEP 6: MONITOR IN REAL-TIME
+══════════════════════════════════════════════════════════════════════════════
+
+1. Copy the URL from console output
+2. Open in web browser
+3. Watch metrics update every batch:
+   - Loss curves (should decrease)
+   - Latent space statistics
+   - Gradient norms
+   - GPU memory usage
+   - And more!
+
+Refresh browser every 10 seconds to see live updates.
+
+
+📈 WHAT YOU'LL LOG
+══════════════════════════════════════════════════════════════════════════════
+
+Loss Components:        Latent Space:           Image Quality:
+  loss_total              latent_mean             image_mse
+  loss_image              latent_std              image_l1
+  loss_caption            latent_norm           
+  loss_alignment        
+                        Captions:               Gradients:
+Hardware:               caption_accuracy        grad_norm
+  gpu_memory_percent      caption_perplexity     grad_mean
+  gpu_memory_used         caption_entropy        grad_max
+  cpu_percent           
+
+Plus: Learning rate, batch size, epoch number, and more!
+
+
+✅ WHAT TO CHECK (After Training Starts)
+══════════════════════════════════════════════════════════════════════════════
+
+After 5 epochs:
+  ✓ Is loss decreasing? YES → Training is healthy!
+  ✓ Are gradients flowing? (grad_norm > 0) YES → Good!
+  ✓ Is GPU being used? (gpu_memory_percent > 70%) YES → Perfect!
+
+After 20 epochs:
+  ✓ Loss decreased by 30%+?
+  ✓ Validation loss similar to training?
+  ✓ Latent space stabilizing?
+
+After 100 epochs:
+  ✓ Analyze which loss component dominates
+  ✓ Check for overfitting (val_loss vs train_loss)
+  ✓ Review gradient health
+
+
+🔍 RIGOROUS ANALYSIS QUESTIONS
+══════════════════════════════════════════════════════════════════════════════
+
+1. Is my learning rate correct?
+   → Check grad_norm trend. Spikes? Reduce LR. Flat? Increase LR.
+
+2. Which component is struggling?
+   → Check loss_image, loss_caption, loss_alignment separately
+   → Whichever is largest needs attention
+
+3. Is the model overfitting?
+   → Compare train_loss vs val_loss
+   → Large gap (> 1.0)? Reduce model size or add regularization
+
+4. Is GPU memory efficient?
+   → Check gpu_memory_percent
+   → < 60%? Can use larger batch. > 95%? Reduce batch!
+
+5. Is vocabulary built correctly?
+   → Check console output for vocabulary size
+   → Ideal: 1000-5000 tokens (yours should be ~1266)
+
+
+📁 OUTPUT FILES
+══════════════════════════════════════════════════════════════════════════════
+
+After training completes:
+  checkpoints/
+    ├── best.pt              ← Use this for inference
+    ├── epoch_000.pt         ← Earlier checkpoints
+    ├── epoch_001.pt
+    └── tokenizer.json       ← Use this for encoding captions
+
+
+📚 DOCUMENTATION
+══════════════════════════════════════════════════════════════════════════════
+
+  ⚡ WANDB_QUICKSTART.md        → Get started in 5 minutes
+  📖 WANDB_GUIDE.md             → Detailed explanations & examples  
+  📘 WANDB_COMPLETE_GUIDE.md    → Everything you need to know
+  🎨 model_architecture_large.py → Model specs
+
+
+🆘 TROUBLESHOOTING
+══════════════════════════════════════════════════════════════════════════════
+
+"wandb: offline"
+  → wandb online && wandb login
+
+"No metrics appearing"
+  → Wait 60 seconds, refresh browser
+
+"Out of memory"
+  → Reduce batch_size: change 16 → 8
+
+"Training too slow"
+  → Increase num_workers: change 4 → 8
+  → Increase batch_size: change 16 → 32
+
+
+🎯 NEXT STEPS
+══════════════════════════════════════════════════════════════════════════════
+
+1. Run training for 20 epochs to verify everything works
+2. Check W&B dashboard to ensure metrics are being logged
+3. Adjust hyperparameters based on observed metrics
+4. Run full training (100 epochs) with optimized settings
+5. Export results and analyze findings
+6. Compare multiple runs to find optimal configuration
+7. Use best model for inference
+
+
+💡 PRO TIPS
+══════════════════════════════════════════════════════════════════════════════
+
+• Log everything: More data = Better insights
+• Run multiple experiments: Different batch sizes, learning rates
+• Document findings: Add notes to W&B runs
+• Compare runs: See which config works best
+• Export metrics: Use in Excel/Python for further analysis
+• Share dashboard: W&B URLs can be shared with team
+
+
+🚀 YOU'RE READY!
+══════════════════════════════════════════════════════════════════════════════
+
+All files are prepared. Everything is configured. Just run:
+
+    cd ~/Documents/dashverse
+    python train_wandb.py
+
+Then open the W&B URL in your browser and watch training in real-time!
+
+
+Questions?
+══════════════════════════════════════════════════════════════════════════════
+
+✓ WANDB_QUICKSTART.md    (5-minute setup)
+✓ WANDB_GUIDE.md        (detailed reference)
+✓ WANDB_COMPLETE_GUIDE.md (everything explained)
+
+All files are in /mnt/user-data/outputs/
+
+Happy training! 🎉📊
