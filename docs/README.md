@@ -156,6 +156,16 @@ Alignment Loss (KL Divergence):
 - **Caption generation**: Gradual improvement (teacher forcing effect)
 - **Latent alignment**: Perfect alignment achieved (KL loss → 0)
 - **Overall**: Model stable, no overfitting detected
+- 
+### Training Visualizations
+
+Below are comprehensive WandB visualizations showing the training progress and metrics:
+
+#### Comprehensive Analysis
+![WandB Comprehensive Analysis](../wandb_comprehensive_analysis.png)
+
+#### Trend Analysis
+![WandB Trend Analysis](../wandb_trend_analysis.png)
 
 ---
 
